@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جواب حب خاص | إليكِ يا أميرتي ❤️</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Aref+Ruqaa:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        parchment: '#FDFBF7',
+                        warmPaper: '#F4EAD5',
+                        classicRed: '#8B0000',
+                        deepRose: '#B22222',
+                        inkBlack: '#2C221E',
+                        goldBorder: '#C5A059'
+                    },
+                    fontFamily: {
+                        ruqaa: ['Aref Ruqaa', 'serif'],
+                        amiri: ['Amiri', 'serif'],
+                        cairo: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Amiri', serif;
+            background-color: #1a0f0d;
+            background-image: radial-gradient(#3a1c17 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: #2C221E;
+            overflow-x: hidden;
+        }
+
+        /* Vintage Paper Card Style */
+        .paper-card {
+            background: #FDFBF7;
+            background-image: repeating-linear-gradient(#FDFBF7 0px, #FDFBF7 24px, #E8DFD1 25px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5), inset 0 0 40px rgba(139,69,19,0.1);
+            border: 1px solid #D4C3A3;
+        }
+
+        /* Polaroid Photo Effect */
+        .polaroid {
+            background: #ffffff;
+            padding: 12px 12px 20px 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transform: rotate(-1deg);
+            transition: all 0.4s ease;
+            border: 1px solid #e2dcd0;
+        }
+        .polaroid:nth-child(even) {
+            transform: rotate(2deg);
+        }
+        .polaroid:hover {
+            transform: scale(1.05) rotate(0deg);
+            z-index: 20;
+            box-shadow: 0 15px 30px rgba(139,0,0,0.3);
+        }
+
+        /* Wax Seal Button */
+        .wax-seal {
+            background: radial-gradient(circle, #A52A2A 0%, #8B0000 70%, #5C0000 100%);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.4);
+            border: 2px solid #660000;
+        }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+<body class="min-h-screen relative selection:bg-classicRed selection:text-white">
+
+    <!-- الأغنية -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="song.mp3" type="audio/mpeg">
+    </audio>
+
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- ==================== ENVELOPE COVER (START) ==================== -->
+    <div id="envelope-cover" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#120807] transition-all duration-1000">
+        <div class="max-w-md w-full paper-card p-8 rounded-2xl text-center relative border-4 border-goldBorder">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full wax-seal flex items-center justify-center text-white text-2xl shadow-lg animate-bounce">
+                💌
+            </div>
+            <h2 class="text-3xl font-bold font-ruqaa text-classicRed mb-3">جواب خاص جداً</h2>
+            <p class="text-inkBlack text-lg mb-6 leading-relaxed">
+                إلى أميرتي الغالية.. رسالة حب خاصة كُتبت لكِ بماء الذهب لتعويضكِ عن كل لحظة.
+            </p>
+            <button onclick="openLetter()" class="wax-seal px-8 py-3.5 rounded-full text-white font-bold text-lg hover:scale-105 transition-all shadow-xl flex items-center justify-center gap-2 mx-auto">
+                <span>افتحي الجواب 🌹</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ==================== MAIN LETTER CONTENT ==================== -->
+    <div id="main-content" class="hidden opacity-0 transition-opacity duration-1000 relative z-10 pb-20">
+        
+        <!-- HEADER -->
+        <header class="sticky top-0 z-40 bg-[#1a0f0d]/90 backdrop-blur-md border-b border-goldBorder/30 px-6 py-4 flex justify-between items-center text-parchment">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-feather-pointed text-goldBorder text-xl"></i>
+                <span class="font-ruqaa text-2xl text-goldBorder">رسالة حب أبدية</span>
+            </div>
+            
+            <button id="music-toggle" onclick="toggleMusic()" class="px-4 py-1.5 rounded-full border border-goldBorder/50 text-xs sm:text-sm text-parchment flex items-center gap-2 hover:bg-goldBorder/20 transition-all">
+                <i id="music-icon" class="fa-solid fa-music text-goldBorder"></i>
+                <span id="music-text">تشغيل الموسيقى 🎵</span>
+            </button>
+        </header>
+
+        <!-- LOVE LETTER CONTAINER -->
+        <main class="max-w-3xl mx-auto px-4 mt-10">
+            
+            <div class="paper-card p-8 sm:p-12 rounded-xl relative shadow-2xl border-2 border-goldBorder mb-16">
+                <!-- Stamp Decoration -->
+                <div class="absolute top-6 left-6 border-2 border-dashed border-classicRed/40 p-2 text-center text-xs text-classicRed font-bold rotate-12">
+                    CUPID POST<br/>10/11/2008<br/>❤️
+                </div>
+
+                <h1 class="text-3xl sm:text-5xl font-bold font-ruqaa text-classicRed text-center mb-8 border-b-2 border-classicRed/20 pb-4">
+                    حبيبتي وأميرتي الأبدية ❤️
+                </h1>
+
+                <!-- Apology & Love Message -->
+                <div class="text-xl sm:text-2xl text-inkBlack leading-loose space-y-6 text-right">
+                    <p>
+                        عارف إن عيد الحب كان إمبارح وما أخدتيش فيه حقك زي ما تستاهلي، وعارف إن كل يوم معاكي هو المفروض يكون عيد.. وعشان كده ما حبتش أعديها كدا!
+                    </p>
+                    <p>
+                        الموقع ده عملته كـ **"جواب حب كلاسيكي"** عشان أقولك فيه إنك كل أيامي الحلوة، وإن حبك في قلبي مش مرتبط بيوم في السنة.. أنتي العيد نفسه.
+                    </p>
+                    <p>
+                        وده كمان تمهيد بسيط وصغير جداً من قلبي لعيد ميلادك الجاي يوم **10/11** اللي بجهزهولك بكل حب وشغف!
+                    </p>
+                    <p class="font-bold text-classicRed text-center font-ruqaa text-3xl pt-4">
+                        "أنتي حكايتي الأجمل، وحبي الأول والأخير" ✨
+                    </p>
+                </div>
+
+                <div class="text-center mt-10">
+                    <button onclick="triggerConfetti()" class="wax-seal px-8 py-3.5 rounded-full text-white font-bold text-lg hover:scale-105 transition-all shadow-lg">
+                        اضغطي هنا لقلوب الاحتفال 🎉
+                    </button>
+                </div>
+            </div>
+
+            <!-- POLAROID GALLERY SECTION -->
+            <section class="mb-20">
+                <h2 class="text-3xl font-bold font-ruqaa text-center text-parchment mb-10">ذكرياتنا المصورة 📸</h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Photo 1 -->
+                    <div class="polaroid">
+                        <img src="img1.jpg" alt="Memory 1" class="w-full h-60 object-cover mb-3">
+                        <p class="font-ruqaa text-xl text-center text-inkBlack font-bold">بداية حكايتنا 🌹</p>
+                        <p class="text-xs text-center text-gray-600 mt-1">"أول يوم عرفتك فيه اتولد عمري."</p>
+                    </div>
+
+                    <!-- Photo 2 -->
+                    <div class="polaroid">
+                        <img src="img2.jpg" alt="Memory 2" class="w-full h-60 object-cover mb-3">
+                        <p class="font-ruqaa text-xl text-center text-inkBlack font-bold">ضحكتك الساحرة 💫</p>
+                        <p class="text-xs text-center text-gray-600 mt-1">"ضحكتك بتطمن قلبي دايماً."</p>
+                    </div>
+
+                    <!-- Photo 3 -->
+                    <div class="polaroid">
+                        <img src="img3.jpg" alt="Memory 3" class="w-full h-60 object-cover mb-3">
+                        <p class="font-ruqaa text-xl text-center text-inkBlack font-bold">لحظاتنا الدافئة 💖</p>
+                        <p class="text-xs text-center text-gray-600 mt-1">"جنبك بس بحس بالراحة."</p>
+                    </div>
+
+                    <!-- Photo 4 -->
+                    <div class="polaroid">
+                        <img src="img4.jpg" alt="Memory 4" class="w-full h-60 object-cover mb-3">
+                        <p class="font-ruqaa text-xl text-center text-inkBlack font-bold">سند وأمان 💍</p>
+                        <p class="text-xs text-center text-gray-600 mt-1">"دائماً بجانبك وفي ظهرك."</p>
+                    </div>
+
+                    <!-- Photo 5 -->
+                    <div class="polaroid sm:col-span-2 lg:col-span-1">
+                        <img src="img5.jpg" alt="Memory 5" class="w-full h-60 object-cover mb-3">
+                        <p class="font-ruqaa text-xl text-center text-inkBlack font-bold">في انتظار 10/11 🎁</p>
+                        <p class="text-xs text-center text-gray-600 mt-1">"مستني أجمل يوم عشان أفرح بيكي."</p>
+                    </div>
+
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center text-parchment/60 text-sm font-cairo">
+            كُتب بحب شديد لأميرة قلبي ❤️ | 10/11/2008
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        function openLetter() {
+            const cover = document.getElementById('envelope-cover');
+            const main = document.getElementById('main-content');
+            
+            cover.classList.add('opacity-0', 'scale-110');
+            setTimeout(() => {
+                cover.style.display = 'none';
+                main.classList.remove('hidden');
+                setTimeout(() => {
+                    main.classList.remove('opacity-0');
+                    toggleMusic();
+                    triggerConfetti();
+                    startParticles();
+                }, 50);
+            }, 800);
+        }
+
+        let isPlaying = false;
+        const bgMusic = document.getElementById('bg-music');
+        const musicBtnText = document.getElementById('music-text');
+
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                isPlaying = false;
+                musicBtnText.textContent = "تشغيل الموسيقى 🎵";
+            } else {
+                bgMusic.play().then(() => {
+                    isPlaying = true;
+                    musicBtnText.textContent = "إيقاف الموسيقى 🎵";
+                }).catch(() => {});
+            }
+        }
+
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#8B0000', '#C5A059', '#ffffff']
+            });
+        }
+
+        function startParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            for (let i = 0; i < 25; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 10 + 8,
+                    speed: Math.random() * 1 + 0.5,
+                    opacity: Math.random() * 0.5 + 0.3
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.y -= p.speed;
+                    if (p.y < -10) p.y = canvas.height + 10;
+                    ctx.save();
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fillStyle = '#C5A059';
+                    ctx.font = `${p.size}px serif`;
+                    ctx.fillText('♥', p.x, p.y);
+                    ctx.restore();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+</html>
